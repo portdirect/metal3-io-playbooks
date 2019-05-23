@@ -1,0 +1,16 @@
+---
+- name: Setup dummy baremetal VMs
+  hosts: virthost
+  #connection: local
+  gather_facts: true
+  tasks:
+    # - import_role:
+    #     name: go
+    - import_role:
+        name: ovs
+    - import_role:
+        name: libvirt
+    - import_role:
+        name: vbmc
+    - import_role:
+        name: hosts

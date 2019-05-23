@@ -1,0 +1,70 @@
+floorplan:
+  racks: 3
+  rack:
+    masters: 1
+    workers: 3
+
+flavors:
+  master:
+    cpu: 2
+    ram: 2048
+    block:
+      - 2048M
+      - 2048M
+      - 3096M
+  worker:
+    cpu: 1
+    ram: 1024
+    block:
+      - 2048M
+
+virtualbmc_base_port: 6230
+
+# 1st item must be the oobm network, 2nd the provisioning
+networks:
+  - name: oobm
+    bridge: oob
+    mtu: 1500
+    network_cidr: "192.168.111.0/24"
+  - name: provisioning
+    bridge: br0
+    mtu: 1500
+  - name: br1
+    bridge: br1
+    mtu: 9100
+  - name: br2
+    bridge: br2
+    mtu: 9100
+  - name: br3
+    bridge: br3
+    mtu: 9100
+  - name: br4
+    bridge: br4
+    mtu: 9100
+
+alphabet:
+  - a
+  - b
+  - c
+  - d
+  - e
+  - f
+  - g
+  - h
+  - i
+  - j
+  - k
+  - l
+  - m
+  - n
+  - o
+  - p
+  - q
+  - r
+  - s
+  - t
+  - u
+  - v
+  - x
+  - y
+  - z

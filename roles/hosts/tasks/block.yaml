@@ -1,0 +1,11 @@
+---
+- name: "Managing block devices for {{defined_nodes['nodes'][outer_item].name }}"
+  shell: |
+    IMAGE_PATH="/var/lib/libvirt/images/{{defined_nodes['nodes'][outer_item].name }}-{{item}}.qcow2"
+    IMAGE_SIZE="{{ defined_nodes['nodes'][outer_item]['resources']['block'][item]}}"
+    if ! [ -f "${IMAGE_PATH}" ]; then
+      qemu-img create -f qcow2 -o preallocation=falloc "${IMAGE_PATH}" "${IMAGE_SIZE}"
+    fi
+    chown qemu:qemu "${IMAGE_PATH}"
+  become: true
+  with_items: "{{ range(0, defined_nodes['nodes'][outer_item].resources.block|length)|list }}"

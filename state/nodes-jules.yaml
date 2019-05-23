@@ -1,0 +1,397 @@
+nodes:
+  - name: master-0-0
+    resources: {"ram": 2048, "cpu": 2, "block": ["2048M", "2048M", "3096M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: RfCPw
+      password: YbddieWNUxEYUnB
+    networks:
+      - name: oobm
+        ip: 192.168.111.20
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:88:4d:48
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:af:d7:6b
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:d2:d7:f5
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:a7:79:2b
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:7a:32:22
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:5f:d8:8e
+  - name: master-1-0
+    resources: {"ram": 2048, "cpu": 2, "block": ["2048M", "2048M", "3096M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: QTaiz
+      password: odEjgiqgvAjeNCy
+    networks:
+      - name: oobm
+        ip: 192.168.111.24
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:91:4e:ce
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:30:12:c0
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:af:9a:c8
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:a9:94:1d
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:c0:89:68
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:f2:01:21
+  - name: master-2-0
+    resources: {"ram": 2048, "cpu": 2, "block": ["2048M", "2048M", "3096M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: EoSuN
+      password: eDbmgzhIYZeMrZZ
+    networks:
+      - name: oobm
+        ip: 192.168.111.28
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:03:f4:a8
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:86:61:49
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:da:68:5a
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:73:45:e9
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:3c:7f:93
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:38:95:e1
+  - name: worker-0-0
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: NfaVX
+      password: sFhodPMPyHHTEqo
+    networks:
+      - name: oobm
+        ip: 192.168.111.21
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:b0:55:f9
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:09:89:fa
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:af:4f:b8
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:30:84:6c
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:0a:bd:3c
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:7b:29:aa
+  - name: worker-0-1
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6231
+      username: gtHzN
+      password: QkXcCryLFDFLyhK
+    networks:
+      - name: oobm
+        ip: 192.168.111.22
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:a5:75:17
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:d8:3b:2e
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:79:14:74
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:d9:50:c9
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:33:20:c2
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:e5:c9:88
+  - name: worker-0-2
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6232
+      username: NVcci
+      password: eFcPjXwfkzMEziO
+    networks:
+      - name: oobm
+        ip: 192.168.111.23
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:f2:d8:88
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:19:ab:52
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:ec:bf:1f
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:38:4c:ed
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:e4:9c:23
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:0e:a8:2f
+  - name: worker-1-0
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: YMhCw
+      password: TaoextZNtLUdlCo
+    networks:
+      - name: oobm
+        ip: 192.168.111.25
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:23:93:7f
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:94:a2:9a
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:a7:f8:22
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:ab:69:58
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:2f:cc:c8
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:27:6f:29
+  - name: worker-1-1
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6231
+      username: vQeJb
+      password: DeOlrnUNuqkxPSy
+    networks:
+      - name: oobm
+        ip: 192.168.111.26
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:62:e5:a6
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:bb:75:d0
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:85:c2:be
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:6f:37:e2
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:c0:0e:19
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:df:e1:0a
+  - name: worker-1-2
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6232
+      username: ScWVE
+      password: zkXwgEyyFhlgTQT
+    networks:
+      - name: oobm
+        ip: 192.168.111.27
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:c1:ad:e3
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:af:67:e8
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:5d:19:f7
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:a0:cc:9e
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:23:02:b5
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:b0:da:2b
+  - name: worker-2-0
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6230
+      username: oTvrT
+      password: BpzxlvdGxUhKfAc
+    networks:
+      - name: oobm
+        ip: 192.168.111.29
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:e1:03:52
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:f6:58:b3
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:33:44:df
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:1d:4a:6c
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:6b:0b:12
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:a2:d6:dd
+  - name: worker-2-1
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6231
+      username: dCivt
+      password: kwUKjJCwAsdAvbh
+    networks:
+      - name: oobm
+        ip: 192.168.111.30
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:bc:7a:d3
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:6a:1a:08
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:9c:6b:2a
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:99:0e:61
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:a6:44:8c
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:48:94:db
+  - name: worker-2-2
+    resources: {"ram": 1024, "cpu": 1, "block": ["2048M"]}
+    ipmi:
+      network: oobm
+      port: 6232
+      username: EScGU
+      password: kyBUiacMOZIefxt
+    networks:
+      - name: oobm
+        ip: 192.168.111.31
+        bridge: oob
+        mtu: 1500
+        mac: 00:fb:fd:67:17:49
+      - name: provisioning
+        bridge: br0
+        mtu: 1500
+        mac: 00:fb:fd:c2:9b:62
+      - name: br1
+        bridge: br1
+        mtu: 9100
+        mac: 00:fb:fd:be:29:8c
+      - name: br2
+        bridge: br2
+        mtu: 9100
+        mac: 00:fb:fd:c0:37:cd
+      - name: br3
+        bridge: br3
+        mtu: 9100
+        mac: 00:fb:fd:a1:cc:03
+      - name: br4
+        bridge: br4
+        mtu: 9100
+        mac: 00:fb:fd:03:e6:8f

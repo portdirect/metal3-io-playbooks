@@ -1,0 +1,70 @@
+---
+
+- name: "IMPI config for {{defined_nodes['nodes'][outer_item].name }}"
+  set_fact:
+    impi_params: "{{defined_nodes['nodes'][outer_item].ipmi}}"
+
+- name: "IMPI ip for {{defined_nodes['nodes'][outer_item].name }}"
+  set_fact:
+    impi_ip: "{{ defined_nodes['nodes'][outer_item]['networks'] | json_query(ip_extract_query) }}"
+  vars:
+    ip_extract_query: "[?name == `{{defined_nodes['nodes'][outer_item].ipmi.network}}`].ip|[0]"
+
+- name: "IMPI MAC for {{defined_nodes['nodes'][outer_item].name }}"
+  set_fact:
+    impi_mac: "{{ defined_nodes['nodes'][outer_item]['networks'] | json_query(mac_extract_query) }}"
+  vars:
+    mac_extract_query: "[?name == `{{defined_nodes['nodes'][outer_item].ipmi.network}}`].mac|[0]"
+
+- name: "IMPI bridge for {{defined_nodes['nodes'][outer_item].name }}"
+  set_fact:
+    impi_bridge: "{{ defined_nodes['nodes'][outer_item]['networks'] | json_query(bridge_extract_query) }}"
+  vars:
+    bridge_extract_query: "[?name == `{{defined_nodes['nodes'][outer_item].ipmi.network}}`].bridge|[0]"
+
+- name: Ensure the Virtual BMC dummy interfaces configured
+  shell: |
+    DEVICE_NAME="{{impi_bridge}}-{{defined_nodes['nodes'][outer_item].name }}"
+    DEVICE_MAC="{{ impi_mac }}"
+    DEVICE_IP="{{ impi_ip }}"
+
+    ip link show "${DEVICE_NAME}" || \
+      ip link add "${DEVICE_NAME}" type dummy
+
+    ip link set "${DEVICE_NAME}" address "${DEVICE_MAC}"
+
+    function test_ip {
+      ip addr show "${DEVICE_NAME}" | \
+        awk "/inet / && /${DEVICE_NAME}/{print \$2 }" | \
+        awk -F '/' '{ print $1 }' | \
+        grep -q "${DEVICE_IP%/*}"
+    }
+
+    if ! test_ip; then
+      ip addr add "${DEVICE_IP}" dev "${DEVICE_NAME}"
+    fi
+
+    ip link set "${DEVICE_NAME}" up
+  become: true
+
+- name: Ensure the Virtual BMC dummy interfaces are tied to the oobm bridge
+  openvswitch_port:
+    bridge: "{{impi_bridge}}"
+    port: "{{impi_bridge}}-{{defined_nodes['nodes'][outer_item].name }}"
+    state: present
+  become: true
+
+- name: Create the Virtual BMCs
+  command: "vbmc add --address {{ impi_ip }} --port {{ impi_params.port }} --username {{ impi_params.username }} --password {{ impi_params.password }} {{defined_nodes['nodes'][outer_item].name }}"
+  args:
+    creates: "/root/.vbmc/{{defined_nodes['nodes'][outer_item].name }}/config"
+  become: true
+
+- name: Ensure the Virtual BMCs are running
+  shell: |
+    name="{{defined_nodes['nodes'][outer_item].name }}"
+    status=$(vbmc show  -f value $name | grep status | cut -f2 -d' ')
+    if [[ $status != "running" ]]; then
+        vbmc start $name
+    fi
+  become: true

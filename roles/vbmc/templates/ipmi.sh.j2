@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Usage: ./ipmi.sh master-0-0 power status
+
+NODE="$1"
+NODES_CONFIG="/tmp/nodes.yaml"
+
+if ! [[ $(yq -r ".nodes[] | select(.name == \"${NODE}\")" ${NODES_CONFIG}) ]]; then
+  echo "Node ${NODE} is not known, sorry, you can select from the following nodes:"
+  yq -r ".nodes[].name" ${NODES_CONFIG}
+  exit 1
+else
+  IPMI_PASSWORD="$(yq -r ".nodes[] | select(.name == \"${NODE}\") | .ipmi.password" ${NODES_CONFIG})"
+  IPMI_USERNAME="$(yq -r ".nodes[] | select(.name == \"${NODE}\") | .ipmi.username" ${NODES_CONFIG})"
+  IPMI_ADDRESS="$(vbmc show "${NODE}" -f yaml | yq -r '.[] | select(.Property == "address") | .Value')"
+  IPMI_PORT="$(vbmc show "${NODE}" -f yaml | yq -r '.[] | select(.Property == "port") | .Value')"
+  ipmitool -I lanplus -U "${IPMI_USERNAME}" -P "${IPMI_PASSWORD}" -H "${IPMI_ADDRESS}" -p "${IPMI_PORT}" ${@:2}
+fi

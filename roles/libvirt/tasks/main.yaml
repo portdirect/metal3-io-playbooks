@@ -1,0 +1,20 @@
+---
+- block:
+  - name: Ensuring Libvirt, Qemu and support packages are present
+    become: true
+    when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    yum:
+      name:
+        - libguestfs-tools
+        - libvirt
+        - libvirt-devel
+        - libvirt-daemon-kvm
+        - qemu-kvm
+        - virt-install
+      state: present
+  - name: Start libvirtd
+    service:
+      name: libvirtd
+      state: started
+      enabled: true
+    become: true

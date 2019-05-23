@@ -1,0 +1,75 @@
+<domain type='qemu'>
+  <name>{{ item.name }}</name>
+  <memory unit='MB'>{{ item.resources.ram }}</memory>
+  <vcpu placement='static'>{{ item.resources.cpu }}</vcpu>
+  <resource>
+    <partition>/machine</partition>
+  </resource>
+  <os>
+    <type arch='x86_64' machine='pc'>hvm</type>
+    <boot dev='network'/>
+    <boot dev='hd'/>
+    <bootmenu enable='no'/>
+    <bios useserial='yes'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <cpu>
+    <topology sockets='1' cores='{{ item.resources.cpu }}' threads='1'/>
+  </cpu>
+  <clock offset='localtime'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <devices>
+    <emulator>/usr/libexec/qemu-kvm</emulator>
+{% for disk_number in range(0, ( item.resources['block'] | length )) %}
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/var/lib/libvirt/images/{{ item.name }}-{{ disk_number }}.qcow2'/>
+      <target dev='vd{{ alphabet[disk_number|int] }}' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+    </disk>
+{% endfor %}
+    <controller type='usb' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <controller type='ide' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'/>
+{% for network_config in item.networks %}
+{% if network_config['name'] != 'oobm' %}
+    <interface type='bridge'>
+      <mac address='{{ network_config['mac'] }}'/>
+      <source bridge='{{ network_config['bridge'] }}'/>
+      <virtualport type='openvswitch'>
+      </virtualport>
+      <target dev='{{ network_config['bridge'] }}-{{ item.name }}'/>
+      <model type='virtio'/>>
+    </interface>
+{% endif %}
+{% endfor %}
+    <serial type='file'>
+      <source path='/tmp/{{ item.name }}.log'/>
+      <target port='0'/>
+    </serial>
+    <serial type='pty'>
+      <target port='1'/>
+    </serial>
+    <console type='file'>
+      <source path='/tmp/{{ item.name }}.log'/>
+      <target type='serial' port='0'/>
+    </console>
+    <input type='tablet' bus='usb'>
+      <address type='usb' bus='0' port='1'/>
+    </input>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <memballoon model='virtio'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+    </memballoon>
+  </devices>
+</domain>

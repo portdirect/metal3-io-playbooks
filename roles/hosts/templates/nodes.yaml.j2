@@ -1,0 +1,24 @@
+nodes:
+{% for node_key in vm_nodes %}
+  - name: {{ node_key.name }}
+    resources: {{ flavors[node_key.flavor] | to_json }}
+    ipmi:
+      network: oobm
+      port: {{ node_key.virtualbmc_port }}
+      username: {{ node_key.virtualbmc_user }}
+      password: {{ node_key.virtualbmc_pass }}
+    networks:
+{% for node_network_keys in networks %}
+      - name: {{ node_network_keys['name'] }}
+{% if node_network_keys['name'] == 'oobm' %}
+        ip: {{ node_key.virtualbmc_ip }}
+{% endif %}
+        bridge: {{ node_network_keys['bridge'] | default("null") }}
+        mtu: {{ node_network_keys['mtu'] | default("null") }}
+{% for node_net_keys in node_mac_map[node_key.name].iteritems() %}
+{%- if node_net_keys[0] == node_network_keys['name'] %}
+        mac: {{ node_net_keys[1] }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}

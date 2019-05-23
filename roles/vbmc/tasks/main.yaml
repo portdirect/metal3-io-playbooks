@@ -1,0 +1,81 @@
+---
+- name: Ensuring VBMC python package is installed
+  pip:
+    name: virtualbmc
+    virtualenv: /var/lib/openstack
+    virtualenv_site_packages: yes
+
+- name: Create VirtualBMC directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: root
+    group: root
+  with_items:
+    - "/etc/virtualbmc"
+    - "/var/log/virtualbmc"
+  become: true
+
+- name: Create VirtualBMC configuration file
+  copy:
+    mode: 0750
+    dest: "/etc/virtualbmc/virtualbmc.conf"
+    content: |
+      [default]
+      config_dir=/root/.vbmc
+      [log]
+      logfile=/var/log/virtualbmc/virtualbmc.log
+      debug=True
+      [ipmi]
+      session_timout=20
+  become: true
+
+- name: Create VirtualBMC unit
+  copy:
+    mode: 0750
+    dest: "/etc/systemd/system/virtualbmc.service"
+    content: |
+      [Unit]
+      Description=Virtual Baseboard Management Controller Emulation service
+      After=syslog.target network.target
+      [Service]
+      Type=simple
+      User=root
+      Group=root
+      ExecStart=/var/lib/openstack/bin/vbmcd --foreground
+      Restart=always
+      RestartSec=1
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: Start the Virtual BMCs (virtualbmc >= 1.4.0+)
+  service:
+    name: "virtualbmc"
+    state: started
+    enabled: true
+  become: true
+
+
+- name: Ensure IPMI-Tool and jq is present
+  become: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  yum:
+    name:
+      - ipmitool
+      - jq
+    state: present
+
+- name: Ensuring YQ python package is installed, to allow inspection of the nodes.yaml
+  pip:
+    name: yq
+    virtualenv: /var/lib/openstack
+    virtualenv_site_packages: yes
+
+- name: Ensure ipmi.sh helper exists
+  template:
+    src: ipmi.sh.j2
+    dest: /var/lib/openstack/bin/ipmi.sh
+    mode: '0711'
+  become: true

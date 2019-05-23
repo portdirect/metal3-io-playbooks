@@ -1,0 +1,95 @@
+---
+
+- name: Define vm_nodes if not already defined
+  block:
+
+    - set_fact:
+        nodes_per_rack: "{{ floorplan['rack']['masters'] +floorplan['rack']['workers'] }}"
+
+    - set_fact:
+        network_cidr: "{{ networks | json_query(\"[?name == 'oobm'].network_cidr|[0]\") }}"
+
+    - name: Generate vm_nodes for "{{floorplan['rack']['masters']*floorplan['racks']}}" masters across "{{floorplan['racks']}}" racks
+      set_fact:
+        vm_nodes: "{{vm_nodes|default([]) + [
+                     {'name': 'master-%s-%s'|format(item[0], item[1]),
+                      'flavor': 'master',
+                      'virtualbmc_user': lookup('password', '/dev/null length=5 chars=ascii_letters'),
+                      'virtualbmc_pass': lookup('password', '/dev/null length=15 chars=ascii_letters'),
+                      'virtualbmc_ip': network_cidr|nthhost((20+(item[0]*(nodes_per_rack|int)))+item[1])|string,
+                      'virtualbmc_port': virtualbmc_base_port+item[1]}]}}"
+      with_nested:
+        - "{{ range(0, floorplan['racks']|int)|list }}"
+        - "{{ range(0, floorplan['rack']['masters']|int)|list }}"
+
+    - name: Generate vm_nodes for "{{floorplan['rack']['workers']*floorplan['racks']}}" workers across "{{floorplan['racks']}}" racks
+      set_fact:
+        vm_nodes: "{{vm_nodes|default([]) + [
+                     {'name': 'worker-%s-%s'|format(item[0], item[1]),
+                      'flavor': 'worker',
+                      'virtualbmc_user': lookup('password', '/dev/null length=5 chars=ascii_letters'),
+                      'virtualbmc_pass': lookup('password', '/dev/null length=15 chars=ascii_letters'),
+                      'virtualbmc_ip': network_cidr|nthhost((20+floorplan['rack']['masters']+(item[0]*(nodes_per_rack|int)))+item[1])|string,
+                      'virtualbmc_port': virtualbmc_base_port+item[1]}]}}"
+      with_nested:
+        - "{{ range(0, floorplan['racks']|int)|list }}"
+        - "{{ range(0, floorplan['rack']['workers']|int)|list }}"
+
+    - name: get a list of MACs to use
+      generate_macs:
+        nodes: "{{ vm_nodes }}"
+        networks: "{{ networks }}"
+      register: node_mac_map
+
+    - name: Template a file to /etc/files.conf
+      template:
+        src: nodes.yaml.j2
+        dest: /tmp/nodes.yaml
+
+- name: Storing in a path relative to the playbook
+  fetch:
+    src: /tmp/nodes.yaml
+    dest: state/nodes-{{ inventory_hostname }}.yaml
+    flat: yes
+
+- include_vars:
+    file: state/nodes-{{ inventory_hostname }}.yaml
+    name: defined_nodes
+
+- name: Configure Networks
+  block:
+
+    - name: Ensure OvS Bridges exist
+      openvswitch_bridge:
+        bridge: "{{ item }}"
+        state: present
+      become: true
+      with_items: "{{ networks | json_query(\"[*].bridge\") }}"
+
+- name: Configure VMs
+  block:
+
+    - name: Define vm vms
+      virt:
+        command: define
+        xml: "{{ lookup('template', 'vm.xml.j2') }}"
+      become: true
+      with_items: "{{ defined_nodes.nodes }}"
+
+    - include_tasks: block.yaml
+      with_items: "{{ range(0, defined_nodes['nodes']|length)|list }}"
+      loop_control:
+        loop_var: outer_item
+
+- name: Configure VBMC
+  block:
+
+    - modprobe:
+        name: dummy
+        state: present
+      become: true
+
+    - include_tasks: vbmc.yaml
+      with_items: "{{ range(0, defined_nodes['nodes']|length)|list }}"
+      loop_control:
+        loop_var: outer_item
