@@ -65,7 +65,7 @@ deactivate
 source /var/lib/openstack/bin/activate
 
 # Install python packages not included as rpms
-pip install --upgrade ${PIP_ARGS} ansible ara
+pip install --upgrade ${PIP_ARGS} ansible ara jmespath netaddr
 
 deactivate
 echo "export PATH=/var/lib/openstack/bin:\${PATH}" >> ${HOME}/.bash_profile

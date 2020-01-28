@@ -1,4 +1,10 @@
 ---
+- name: Ensuring python libvirt package is installed
+  pip:
+    name: libvirt-python==4.5.0
+    virtualenv: /var/lib/openstack
+    virtualenv_site_packages: yes
+
 - name: Ensuring VBMC python package is installed
   pip:
     name: virtualbmc
